@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b101a">
+<title>THE LAST COUNTDOWN</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
+:root{--gold:#d9bb80;--gold2:#f1dfb8;--bg:#0b101a;--muted:#9aa4b5}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:24px 14px;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 0%,#26334a 0%,transparent 58%),var(--bg);color:#fff;font-family:'Cairo',sans-serif}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.12;background-image:radial-gradient(#d9bb80 1px,transparent 1px);background-size:34px 34px}
+main{position:relative;width:min(100%,760px);padding:clamp(22px,5vw,42px);border:1px solid #d9bb8038;border-radius:28px;background:#101827eF;box-shadow:0 28px 90px #0008;text-align:center}
+.eyebrow{direction:ltr;letter-spacing:5px;color:var(--gold);font-size:11px;font-weight:700}
+.line{height:2px;width:54px;background:var(--gold);margin:20px auto}
+h1{font-size:clamp(28px,6vw,44px);margin:0;color:var(--gold2);font-weight:800}
+.subtitle{color:var(--muted);font-size:14px;margin:8px 0 30px}
+.timer{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;direction:rtl}
+.tile{padding:20px 4px;border:1px solid #d9bb8033;border-radius:17px;background:linear-gradient(145deg,#202d42,#141d2c);min-width:0}
+.num{font-size:clamp(27px,7vw,48px);font-weight:800;color:var(--gold2);font-variant-numeric:tabular-nums;direction:ltr}
+.unit{font-size:12px;color:var(--muted);margin-top:4px}
+.message{margin:30px 0 25px;padding:20px 8px;border-block:1px solid #d9bb8030;color:#ead9b6;font-size:clamp(15px,3.8vw,20px);font-weight:600;line-height:2}
+.progress-head{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-bottom:9px}
+.track{height:9px;border-radius:20px;background:#293449;overflow:hidden}
+.fill{height:100%;width:0;background:linear-gradient(90deg,#99733d,#f2d99e);border-radius:20px;transition:width .5s}
+.percent{margin-top:9px;color:var(--gold);font-size:13px}
+.music{margin:26px auto 0;padding:17px;border:1px solid #d9bb8030;border-radius:18px;background:#ffffff08;text-align:right}
+.music-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.disc{width:43px;height:43px;border-radius:50%;display:grid;place-items:center;background:#29374d;color:var(--gold);font-size:20px;flex:none}
+.song-title{font-weight:700;color:var(--gold2)}
+.song-sub{font-size:11px;color:var(--muted)}
+audio{width:100%;height:38px;accent-color:var(--gold)}
+.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:23px}
+button{font:inherit;cursor:pointer;border:1px solid #d9bb8066;color:var(--gold2);background:#1c293d;padding:10px 19px;border-radius:25px;font-size:13px}
+button:hover{background:#2a3a53}
+.settings{display:none;text-align:right;margin-top:18px;padding:18px;border:1px solid #d9bb8033;border-radius:18px;background:#0c1422}
+.settings.open{display:block}
+.settings h2{font-size:16px;color:var(--gold2);margin:0 0 12px}
+.field{display:grid;gap:6px;margin:11px 0}
+label{font-size:12px;color:var(--muted)}
+input{width:100%;font:inherit;color:#fff;background:#182338;border:1px solid #45516a;border-radius:10px;padding:10px;direction:ltr}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{font-size:11px;color:#8d98aa;line-height:1.8;margin-top:10px}
+.footer{margin-top:28px;color:#758095;font-size:10px;letter-spacing:2px;direction:ltr;line-height:2}
+.done{display:none;grid-column:1/-1;color:var(--gold2);font-size:22px;padding:18px}.timer.completed .tile{display:none}.timer.completed .done{display:block}
+@media(max-width:430px){main{padding:24px 13px}.timer{gap:6px}.tile{padding:15px 2px;border-radius:12px}.unit{font-size:10px}.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">THE LAST COUNTDOWN</div>
+  <div class="line"></div>
+  <h1 id="eventTitle">واللي باقي هيعدّي</h1>
+  <p class="subtitle">رحلة طويلة.. ونهايتها قربت</p>
+
+  <section class="timer" id="timer">
+    <div class="tile"><div class="num" id="days">00</div><div class="unit">يوم</div></div>
+    <div class="tile"><div class="num" id="hours">00</div><div class="unit">ساعة</div></div>
+    <div class="tile"><div class="num" id="minutes">00</div><div class="unit">دقيقة</div></div>
+    <div class="tile"><div class="num" id="seconds">00</div><div class="unit">ثانية</div></div>
+    <div class="done" id="doneMessage">وصلنا للحظة المنتظرة.. الحمد لله ❤️</div>
+  </section>
+
+  <div class="message" id="dailyMessage">هنا بتنتهي حكاية الصبر.. وتبدأ حكاية جديدة بإذن الله.</div>
+
+  <section>
+    <div class="progress-head"><span>الوقت المنقضي</span><span id="targetLabel">15 فبراير 2027</span></div>
+    <div class="track"><div class="fill" id="progressFill"></div></div>
+    <div class="percent"><span id="percentage">0%</span> من المدة المحددة</div>
+  </section>
+
+  <section class="music">
+    <div class="music-top">
+      <div class="disc">♫</div>
+      <div><div class="song-title">خلصت الحكاية</div><div class="song-sub">آدم · الأغنية اللي هترافق الرحلة</div></div>
+    </div>
+    <audio id="song" controls preload="metadata">
+      <source src="esm3.com.79601.mp3" type="audio/mpeg">
+      متصفحك لا يدعم تشغيل الصوت.
+    </audio>
+    <div class="hint">اضغط تشغيل لسماع الأغنية. التشغيل التلقائي غير مفعل احترامًا لإعدادات المتصفح.</div>
+  </section>
+
+  <div class="actions">
+    <button id="settingsButton" type="button">⚙ تعديل موعد العد التنازلي</button>
+    <button id="shareButton" type="button">↗ مشاركة الموقع</button>
+  </div>
+
+  <section class="settings" id="settingsPanel">
+    <h2>إعدادات العد التنازلي</h2>
+    <div class="field">
+      <label for="titleInput">عنوان المناسبة</label>
+      <input id="titleInput" maxlength="70" placeholder="مثال: يوم التخرج">
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="dateInput">التاريخ</label>
+        <input id="dateInput" type="date">
+      </div>
+      <div class="field">
+        <label for="timeInput">الوقت</label>
+        <input id="timeInput" type="time" value="00:00">
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="startDateInput">بداية حساب النسبة</label>
+        <input id="startDateInput" type="date">
+      </div>
+      <div class="field">
+        <label for="messageInput">رسالتك في المنتصف</label>
+        <input id="messageInput" maxlength="160">
+      </div>
+    </div>
+    <div class="actions">
+      <button id="saveButton" type="button">حفظ التعديلات</button>
+      <button id="resetButton" type="button">استعادة الإعدادات الأصلية</button>
+    </div>
+    <div class="hint">التعديلات بتتحفظ على نفس المتصفح والجهاز. لو فتحت الموقع من جهاز تاني، هتحتاج تضبط الإعدادات عليه من جديد.</div>
+  </section>
+
+  <div class="footer">A NEW CHAPTER IS WAITING<br><span id="footerDate">15 FEBRUARY 2027</span></div>
+</main>
+
+<script>
+const defaults = {
+  title: "واللي باقي هيعدّي",
+  target: "2027-02-15",
+  time: "00:00",
+  start: "2026-11-16",
+  message: "هنا بتنتهي حكاية الصبر.. وتبدأ حكاية جديدة بإذن الله."
+};
+
+const dailyMessages = [
+  "كل يوم بيعدّي هو خطوة أقرب للحياة اللي مستنيها.",
+  "اللهم هون ما تبقى واجعل النهاية فرحة لا تُنسى.",
+  "مشوار طويل.. بس بإذن الله نهايته جبر وفرحة.",
+  "اصبر شوية.. فاضل القليل بإذن الله.",
+  "وراء كل صبر طويل جبر جميل من ربنا.",
+  "يوم ورا يوم.. والحلم بقى أقرب.",
+  "اللهم ردنا لأهلنا سالمين مجبورين الخاطر.",
+  "لسه في أحلام كتير مستنياني.. والقادم أجمل بإذن الله."
+];
+
+let settings = loadSettings();
+
+function loadSettings(){
+  try {
+    return {...defaults, ...JSON.parse(localStorage.getItem("countdownSettings") || "{}")};
+  } catch(e) {
+    return {...defaults};
+  }
+}
+function targetDate(){
+  return new Date(`${settings.target}T${settings.time || "00:00"}:00`);
+}
+function localDateString(date){
+  const y=date.getFullYear(), m=String(date.getMonth()+1).padStart(2,"0"), d=String(date.getDate()).padStart(2,"0");
+  return `${y}-${m}-${d}`;
+}
+function prettyDate(date){
+  return new Intl.DateTimeFormat("ar-EG",{day:"numeric",month:"long",year:"numeric"}).format(date);
+}
+function dailyMessage(){
+  const day=Math.floor(Date.now()/86400000);
+  return dailyMessages[((day%dailyMessages.length)+dailyMessages.length)%dailyMessages.length];
+}
+function renderSettings(){
+  document.getElementById("eventTitle").textContent=settings.title || "العد التنازلي";
+  document.getElementById("targetLabel").textContent=prettyDate(targetDate());
+  document.getElementById("footerDate").textContent=targetDate().toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"}).toUpperCase();
+  document.getElementById("dailyMessage").textContent=settings.message || dailyMessage();
+}
+function update(){
+  const now=new Date(), end=targetDate(), diff=end-now;
+  const timer=document.getElementById("timer");
+  if(diff<=0){
+    timer.classList.add("completed");
+  } else {
+    timer.classList.remove("completed");
+    const sec=Math.floor(diff/1000);
+    document.getElementById("days").textContent=String(Math.floor(sec/86400)).padStart(2,"0");
+    document.getElementById("hours").textContent=String(Math.floor(sec%86400/3600)).padStart(2,"0");
+    document.getElementById("minutes").textContent=String(Math.floor(sec%3600/60)).padStart(2,"0");
+    document.getElementById("seconds").textContent=String(sec%60).padStart(2,"0");
+  }
+  const start=new Date(`${settings.start}T00:00:00`);
+  const total=end-start;
+  let pct=total>0 ? ((now-start)/total)*100 : (now>=end?100:0);
+  pct=Math.max(0,Math.min(100,pct));
+  document.getElementById("progressFill").style.width=pct+"%";
+  document.getElementById("percentage").textContent=pct.toFixed(1)+"%";
+}
+function fillForm(){
+  document.getElementById("titleInput").value=settings.title;
+  document.getElementById("dateInput").value=settings.target;
+  document.getElementById("timeInput").value=settings.time;
+  document.getElementById("startDateInput").value=settings.start;
+  document.getElementById("messageInput").value=settings.message;
+}
+document.getElementById("settingsButton").addEventListener("click",()=>{
+  const panel=document.getElementById("settingsPanel");
+  panel.classList.toggle("open");
+  if(panel.classList.contains("open")) fillForm();
+});
+document.getElementById("saveButton").addEventListener("click",()=>{
+  const target=document.getElementById("dateInput").value;
+  const start=document.getElementById("startDateInput").value;
+  if(!target || !start){alert("اختار تاريخ النهاية وبداية حساب النسبة.");return;}
+  settings={
+    title:document.getElementById("titleInput").value.trim() || "العد التنازلي",
+    target,
+    time:document.getElementById("timeInput").value || "00:00",
+    start,
+    message:document.getElementById("messageInput").value.trim() || dailyMessage()
+  };
+  try { localStorage.setItem("countdownSettings",JSON.stringify(settings)); }
+  catch(e) { alert("تعذر حفظ الإعدادات على هذا المتصفح، لكن التعديل سيعمل مؤقتًا."); }
+  renderSettings(); update();
+  document.getElementById("settingsPanel").classList.remove("open");
+});
+document.getElementById("resetButton").addEventListener("click",()=>{
+  settings={...defaults};
+  try { localStorage.setItem("countdownSettings",JSON.stringify(settings)); } catch(e) {}
+  fillForm(); renderSettings(); update();
+});
+document.getElementById("shareButton").addEventListener("click",async()=>{
+  const data={title:"The Last Countdown",text:"العد التنازلي بتاعي..",url:location.href};
+  try{
+    if(navigator.share) await navigator.share(data);
+    else if(navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(location.href); alert("تم نسخ رابط الموقع"); }
+    else { window.prompt("انسخ رابط الموقع:", location.href); }
+  }catch(e){}
+});
+renderSettings();
+update();
+setInterval(update,1000);
+</script>
+</body>
+</html>
